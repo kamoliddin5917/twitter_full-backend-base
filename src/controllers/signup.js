@@ -8,6 +8,19 @@ module.exports = {
     if (!firstName || !lastName || !email || !password)
       return res.status(400).json({ message: "Invalid values!" });
 
+    if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
+      return res.status(400).json({ message: `This is not email (${email})` });
+
+    if (
+      !password.match(
+        /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{7,17}$/
+      )
+    )
+      return res.status(400).json({
+        message:
+          "Kamida 7 ta belgi, ko'pi bn 17 ta belgi, kotta-kichkina harf, belgi, son bo'lishi kerak!",
+      });
+
     const findUser = await pg(
       "select * from users where user_email = $2 and status = $1",
       "active",
