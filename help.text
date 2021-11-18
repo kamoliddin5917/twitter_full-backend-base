@@ -23,3 +23,5 @@ DELETE
 /profile/{postId} - shu posti o'chirish
 /comment/{commentId} - shu commenti o'chirish
 /exit - acountni o'chirish
+
+test
