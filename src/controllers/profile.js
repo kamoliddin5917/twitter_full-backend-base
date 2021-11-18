@@ -142,4 +142,38 @@ module.exports = {
       res.status(500).json({ message: "Database Error 500!" });
     }
   },
+  COMMENT_DELETE: async (req, res) => {
+    try {
+      const { token } = req.headers;
+      const { userId } = jwt.verify(token);
+      const { commentId } = req.params;
+
+      if (!commentId)
+        return res.status(400).json({ message: "Ivnalid values!" });
+      const comment = await pg(
+        `select comment_id, comment_name 
+        from users left join posts on users.user_id = posts.post_author left join comments on posts.post_id = comments.comment_post
+        where users.status = $1 and users.user_id = $2 and comments.comment_id = $3`,
+        "active",
+        userId,
+        commentId
+      );
+      if (comment.rows.length) {
+        const information = await pg(
+          `delete from comments where comment_id = $1
+          returning comment_id as id, comment_date as created, comment_name as comment, comment_post, comment_author`,
+          commentId
+        );
+        if (!information.rows.length)
+          return res.status(400).json({ message: "Not dalate!" });
+        return res
+          .status(200)
+          .json({ message: "ok", daleted: information.rows });
+      }
+      res.status(400).json({ message: "Invalid values!" });
+    } catch (error) {
+      console.log(error.message);
+      res.status(500).json({ message: "Database Error 500!" });
+    }
+  },
 };

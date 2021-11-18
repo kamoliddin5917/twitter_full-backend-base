@@ -22,5 +22,6 @@ router.put("/user", profileController.USER_PUT);
 router.delete("/profile/:postId", profileController.DELETE);
 router.delete("/comment/:commentId", homecontroller.DELETE);
 router.delete("/exit", profileController.USER_EXIT);
+router.delete("/post/comment/:commentId", profileController.COMMENT_DELETE);
 
 module.exports = router;
